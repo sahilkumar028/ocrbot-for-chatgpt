@@ -1,0 +1,29 @@
+// 1. Find all code blocks
+const codeBlocks = document.querySelectorAll('pre code');
+
+let copied = false;
+
+codeBlocks.forEach((block) => {
+  const text = block.textContent.trim();
+
+  try {
+    const json = JSON.parse(text); // Validate JSON
+
+    // Create temporary textarea
+    const textarea = document.createElement('textarea');
+    textarea.value = JSON.stringify(json, null, 2);
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+
+    console.log("✅ JSON copied using fallback method!");
+    copied = true;
+  } catch (e) {
+    // Not valid JSON
+  }
+});
+
+if (!copied) {
+  console.warn("⚠️ No valid JSON found to copy.");
+}

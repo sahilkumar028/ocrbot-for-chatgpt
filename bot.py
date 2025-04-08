@@ -5,6 +5,39 @@ import pyautogui
 import pyperclip
 from flask import Flask, request, redirect
 
+js_code = """
+// 1. Find all code blocks
+const codeBlocks = document.querySelectorAll('pre code');
+
+let copied = false;
+
+codeBlocks.forEach((block) => {
+  const text = block.textContent.trim();
+
+  try {
+    const json = JSON.parse(text); // Validate JSON
+
+    // Create temporary textarea
+    const textarea = document.createElement('textarea');
+    textarea.value = JSON.stringify(json, null, 2);
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+
+    console.log("✅ JSON copied using fallback method!");
+    copied = true;
+  } catch (e) {
+    // Not valid JSON
+  }
+});
+
+if (!copied) {
+  console.warn("⚠️ No valid JSON found to copy.");
+}
+"""
+
+
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -48,7 +81,7 @@ def upload_file():
         time.sleep(1)
         pyautogui.typewrite(os.path.abspath(filepath), interval=0.1)
         pyautogui.press("enter")
-        time.sleep(2)
+        time.sleep(3)
 
         # Copy image to clipboard (Windows)
         pyautogui.hotkey("ctrl", "c")
@@ -62,9 +95,21 @@ def upload_file():
         pyautogui.hotkey("ctrl", "v")
         time.sleep(3)
         pyautogui.typewrite("read and provide me json data")
+        time.sleep(2)
+        pyautogui.press("enter")
+        time.sleep(2)
+        pyautogui.hotkey("ctrl", "shift", "j")
+        time.sleep(2)
+        pyautogui.click(x=500, y=800)  # Adjust x/y to the console input area
+        time.sleep(1)
+        
+        pyperclip.copy(js_code)
+        time.sleep(2)
+        # Paste into console
+        pyautogui.hotkey("ctrl", "v")
         time.sleep(1)
         pyautogui.press("enter")
-
+        
         return "File uploaded and sent to ChatGPT!"
 
 if __name__ == '__main__':
