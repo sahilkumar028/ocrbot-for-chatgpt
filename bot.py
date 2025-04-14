@@ -97,11 +97,11 @@ def upload_file():
         pyautogui.typewrite("read and provide me json data")
         time.sleep(2)
         pyautogui.press("enter")
-        time.sleep(2)
+        time.sleep(15)
         pyautogui.hotkey("ctrl", "shift", "j")
         time.sleep(2)
-        pyautogui.click(x=500, y=800)  # Adjust x/y to the console input area
-        time.sleep(1)
+        pyautogui.click(x=1500, y=800)  # Adjust x/y to the console input area
+        time.sleep(2)
         
         pyperclip.copy(js_code)
         time.sleep(2)
